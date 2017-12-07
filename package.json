@@ -1,0 +1,22 @@
+{
+  "name": "9w",
+  "version": "1.0.0",
+  "description": "no way",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yi-love/9w.git"
+  },
+  "author": "Yi-love",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yi-love/9w/issues"
+  },
+  "homepage": "https://github.com/Yi-love/9w#readme",
+  "dependencies": {
+    "pdfreader": "^0.2.4"
+  }
+}
