@@ -1,6 +1,6 @@
 'use strict';
 
-const { matchNumber , matchFloatNumber } = require('../lib/util');
+const { matchNumber , matchFloatNumber , matchMaxSymbol } = require('../lib/util');
 
 class Parser {
     constructor(isFull){
@@ -128,6 +128,10 @@ class Parser {
     }
     parse(numStr = ''){
         numStr = '' + numStr;
+        console.log(numStr);
+        if ( !this.getStart() && matchMaxSymbol(numStr) ){
+            return this;
+        }
         if ( !this.checkNumStr(numStr) ){
             return this.setCached([]).setStart(true);
         }
