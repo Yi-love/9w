@@ -128,7 +128,6 @@ class Parser {
     }
     parse(numStr = ''){
         numStr = '' + numStr;
-        console.log(numStr);
         if ( !this.getStart() && matchMaxSymbol(numStr) ){
             return this;
         }
