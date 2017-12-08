@@ -84,10 +84,27 @@ class Parser {
     }
     computedValidateList(){
         let cached = this.getCached();
+
+        let arrX = [];
+        let arrY = [];
+        for ( let i = 0 ; i < cached.length ; i++ ){
+            if ( cached[i].indexOf('.') >= 0 ){
+                arrY.push(matchFloatNumber(cached[i]));
+            }else{
+                arrX.push(matchNumber(cached[i]));
+            }
+        }
+        if (arrX.length !== arrY.length ){
+            return [];
+        }
+
+        arrX.sort((a,b)=>a - b);
+        arrY.sort((a,b)=>a - b);
         let list = [];
-        for ( let i = 0 ; i < cached.length -1 ; i += 2 ){
-            let x = matchNumber(cached[i]);
-            let y = matchFloatNumber(cached[i + 1]);
+        for ( let i = 0 ; i < arrX.length ; i++ ){
+            let x = arrX[i];
+            let y = arrY[i];
+
             if ( !x || !y ){
                 return [];
             }
