@@ -3,11 +3,12 @@
 const { matchNumber , matchFloatNumber } = require('../lib/util');
 
 class Parser {
-    constructor(){
+    constructor(isFull){
         this.cached = [];
         this.current = {};
         this.source = [];
-        this.list = [];
+        this.isStart = true;
+        this.isFull = !!isFull;
     }
     setCached(cached){
         this.cached = cached;
@@ -21,7 +22,14 @@ class Parser {
         return this;
     }
     setCurrentList(list){
-        this.current.list = list;
+        if ( this.getStart() ){
+            return this.appendList(list);
+        }
+        this.current.list[this.getCurrentList().length - 1] = list;
+        return this;
+    }
+    appendList(list){
+        this.current.list.push(list);
         return this;
     }
     setSource(){
@@ -33,21 +41,12 @@ class Parser {
         }
         return this;
     }
+    setStart(start){
+        this.isStart = start;
+        return this;
+    }
     getCurrentList(){
         return this.current.list;
-    }
-    getValidateList(){
-        let cached = this.getCached();
-        let list = [];
-        for ( let i = 0 ; i < cached.length -1 ; i += 2 ){
-            let stockNum = matchNumber(cached[i]);
-            let stockPrice = matchFloatNumber(cached[i + 1]);
-            if ( !stockNum || !stockPrice ){
-                return [];
-            }
-            list.push({stockNum, stockPrice});
-        }
-        return list;
     }
     getCurrent(){
         return this.current;
@@ -55,19 +54,46 @@ class Parser {
     getCached(){
         return this.cached;
     }
-    getSource(){
+    getAllSource(){
         return this.source;
+    }
+    getStart(){
+        return this.isStart;
+    }
+    getSource(){
+        let allSource = this.getAllSource();
+        let source = [];
+        for (let i = 0; i < allSource.length; i++) {
+            if ( allSource[i].list.length > 0 ){
+                source.push(Object.assign({},allSource[i]));
+            }
+        }
+        return source;
     }
     searchSourceById(id){
         if ( !id ){
             return -1;
         }
-        for (let i = 0; i < this.getSource.length; i++) {
-            if ( this.getSource[i].id === id ){
+        let source = this.getAllSource();
+        for (let i = 0; i < source.length; i++) {
+            if ( source[i].id === id ){
                 return i;
             }
         }
         return -1;
+    }
+    computedValidateList(){
+        let cached = this.getCached();
+        let list = [];
+        for ( let i = 0 ; i < cached.length -1 ; i += 2 ){
+            let x = matchNumber(cached[i]);
+            let y = matchFloatNumber(cached[i + 1]);
+            if ( !x || !y ){
+                return [];
+            }
+            list.push({x , y});
+        }
+        return list;
     }
     isCanCheck(){
         let cached = this.getCached();
@@ -77,21 +103,23 @@ class Parser {
         return matchNumber(numStr) || matchFloatNumber(numStr) ? true : false;
     }
     end(){
-        return this.setSource().getSource();
+        this.setSource().setCached([]).setStart(true).setCurrent({id:null});
+        return this.isFull ? this.getAllSource() : this.getSource();
     }
     next(id){
-        return this.setSource().setCached([]).setCurrent({id});
+        return this.setSource().setCached([]).setStart(true).setCurrent({id});
     }
     parse(numStr = ''){
         numStr = '' + numStr;
         if ( !this.checkNumStr(numStr) ){
-            return this.setCached([]);
+            return this.setCached([]).setStart(true);
         }
         this.setCached([].concat(this.getCached(), [numStr]));
         if ( this.isCanCheck() ){
-            let list = this.getValidateList();
-            if ( list.length && list.length > this.getCurrentList().length ){
+            let list = this.computedValidateList();
+            if ( list.length ){
                 this.setCurrentList(list);
+                this.setStart(false);
             }
         }
         return this;

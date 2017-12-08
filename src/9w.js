@@ -4,8 +4,14 @@ const path = require('path');
 const { PdfReader } = require('pdfreader');
 const Parser = require('./parser');
 
-function qw(filePath) {
-    const parser =  new Parser();
+/**
+ * [qw 解析pdf]
+ * @param  {[String]}  filePath [文件路径]
+ * @param  {Boolean} isFull   [是否输出全部数据，包含空对象]
+ * @return {[Promise]}           [description]
+ */
+function qw(filePath , isFull) {
+    const parser =  new Parser(isFull);
     const pdfreader = new PdfReader();
     return new Promise((resolve , reject)=>{
         pdfreader.parseFileItems(path.resolve(__dirname , filePath) , (err, item)=>{
@@ -23,6 +29,6 @@ function qw(filePath) {
     });
 }
 
-module.exports = (filePath)=>{
-    return qw(filePath);
+module.exports = (filePath , isFull)=>{
+    return qw(filePath , isFull);
 }
