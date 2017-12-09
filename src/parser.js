@@ -46,16 +46,16 @@ class Parser {
         return this;
     }
     getCurrentList(){
-        return this.current.list;
+        return [].concat(this.current.list);
     }
     getCurrent(){
-        return this.current;
+        return Object.assign({} , this.current);
     }
     getCached(){
-        return this.cached;
+        return [].concat(this.cached);
     }
     getAllSource(){
-        return this.source;
+        return [].concat(this.source);
     }
     getStart(){
         return this.isStart;
