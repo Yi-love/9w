@@ -1,6 +1,5 @@
 'use strict';
 
-const path = require('path');
 const { PdfReader } = require('pdfreader');
 const Parser = require('./parser');
 
@@ -14,7 +13,7 @@ function qw(filePath , isFull) {
     const parser =  new Parser(isFull);
     const pdfreader = new PdfReader();
     return new Promise((resolve , reject)=>{
-        pdfreader.parseFileItems(path.resolve(__dirname , filePath) , (err, item)=>{
+        pdfreader.parseFileItems(filePath, (err, item)=>{
             if ( err ){
                 return reject(err);
             }
