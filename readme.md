@@ -1,5 +1,5 @@
 # 9w
-no!!!! i don't want say anything.
+Parse the stock price file.
 
 ```js
 const path = require('path');
