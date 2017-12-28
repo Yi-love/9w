@@ -128,7 +128,7 @@ class Parser {
     }
     parse(numStr = ''){
         numStr = '' + numStr;
-        if ( !this.getStart() && matchMaxSymbol(numStr) ){
+        if ( (this.getCached().length || !this.getStart()) && matchMaxSymbol(numStr) ){
             return this;
         }
         if ( !this.checkNumStr(numStr) ){

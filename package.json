@@ -1,7 +1,7 @@
 {
   "name": "9w",
-  "version": "1.0.2",
-  "description": "no way!!!",
+  "version": "1.0.3",
+  "description": "Parse the stock price file.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
