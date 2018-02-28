@@ -3,7 +3,7 @@ Parse the stock price file.
 
 ```js
 const path = require('path');
-const qw = require('qw');
+const qw = require('@cray/9w');
 
 qw(path.resolve(__dirname, './test/demo.pdf')).then((result)=>{
     console.log('result: ' , result);
