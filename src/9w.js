@@ -1,7 +1,42 @@
 'use strict';
 
-const { PdfReader } = require('pdfreader');
+const PDFParser = require('pdf2json');
 const Parser = require('./parser');
+
+/**
+ * [解析pdf]
+ * @param  {[type]} pages  [pdf页面]
+ * @param  {[type]} parser [价格解析对象]
+ * @return {[type]}        [description]
+ */
+let parsePagesTexts = (pages , parser)=>{
+    for ( let i = 0 ; i < pages.length ; i++ ){
+        let texts = pages[i].Texts || [];
+        parser.next(i);
+        for ( let j = 0 ; j < texts.length ; j++ ){
+            parser.parse(decodeURIComponent(texts[j].R[0].T));
+        }
+    }
+    return parser.end();
+};
+
+/**
+ * [处理func句柄]
+ * @param  {[type]}   parser   [价格解析对象]
+ * @param  {Function} callback [回调]
+ * @return {[type]}            [description]
+ */
+let resolveHandler = (parser , callback)=>{
+    return (pdfData)=>{
+        let data;
+        try{
+            data = parsePagesTexts(pdfData.formImage.Pages || [] , parser);
+        }catch(err){
+            return callback(err);
+        }
+        return callback(void 0 , data);
+    };
+}
 
 /**
  * [qw 解析pdf]
@@ -11,20 +46,13 @@ const Parser = require('./parser');
  */
 function qw(filePath , isFull) {
     const parser =  new Parser(isFull);
-    const pdfreader = new PdfReader();
+    const pdfParser = new PDFParser();
     return new Promise((resolve , reject)=>{
-        pdfreader.parseFileItems(filePath, (err, item)=>{
-            if ( err ){
-                return reject(err);
-            }
-            if ( !item ){
-                return resolve(parser.end());
-            }else if ( item.page ){
-                return parser.next(item.page);
-            }else if ( item.text ){
-                return parser.parse(item.text);
-            }
-        });
+        pdfParser.on("pdfParser_dataError", error => reject(error));
+        pdfParser.on("pdfParser_dataReady", resolveHandler(parser , (err , data)=>{
+            return err ? reject(err) : resolve(data);
+        }));
+        pdfParser.loadPDF(filePath);
     });
 }
 
