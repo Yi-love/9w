@@ -48,8 +48,8 @@ function qw(filePath , isFull) {
     const parser =  new Parser(isFull);
     const pdfParser = new PDFParser();
     return new Promise((resolve , reject)=>{
-        pdfParser.on("pdfParser_dataError", error => reject(error));
-        pdfParser.on("pdfParser_dataReady", resolveHandler(parser , (err , data)=>{
+        pdfParser.on('pdfParser_dataError', error => reject(error));
+        pdfParser.on('pdfParser_dataReady', resolveHandler(parser , (err , data)=>{
             return err ? reject(err) : resolve(data);
         }));
         pdfParser.loadPDF(filePath);
